@@ -89,9 +89,7 @@ def loadWords(type, stemmer):
 	else:
 		stemmedDict = unstemmedDict
 	# return both stemmed and unstemmed dictionaries
-	# by using set() instead of keeping them as lists
-	# removes duplicates
-	return [unstemmedDict, set(stemmedDict)]
+	return [unstemmedDict, stemmedDict]
 
 # get basic positive and negative, unstemmed dictionaries
 positiveWords = loadWords('positive', stemmer="None").pop(0)
