@@ -49,7 +49,7 @@ for i in pageText[6:477]:
         	# the last item in the list
         	# Note: there is an extra space added because otherwise
         	# append will crunch words together
-            statements.append(statements.pop() + " " +
+            statements.append(statements.pop() + ' ' +
             cleanedStatements.replace(currentSpeaker, ''))
         # if the current speaker is different than prior speaker,
         # add cleaned statement on its own
@@ -60,12 +60,15 @@ for i in pageText[6:477]:
     # if there is no speaker listed (does not match regex search),
     # add cleaned statement to the last full statement that was added
     else:
-    	statements.append(statements.pop() + " " + cleanedStatements)
+    	statements.append(statements.pop() + ' ' + cleanedStatements)
 
 # show example output
 print statements[0:5]
 
 ### Problem 2
+
+# create list of stop words
+stopWords = stopwords.words('english')
 
 # create function to load sentimental dictionaries
 def loadWords(type, stemmer):
@@ -76,15 +79,15 @@ def loadWords(type, stemmer):
 	unstemmedDict = url.split('\n')
 	# determine which stemmer should be used
 	# (1) Porter
-	if stemmer=="Porter":
+	if stemmer=='Porter':
 		# for each word in dictionary, stem
 		stemmedDict = [nltk.stem.PorterStemmer().stem(word) for word in unstemmedDict]
 	# (2) Snowball
-	elif stemmer=="Snowball":
+	elif stemmer=='Snowball':
 		# for each word in dictionary, stem
 		stemmedDict = [nltk.stem.SnowballStemmer('english').stem(word) for word in unstemmedDict]
 	# (3) Lancaster
-	elif stemmer=="Lancaster":
+	elif stemmer=='Lancaster':
 		stemmedDict = [nltk.stem.LancasterStemmer().stem(word) for word in unstemmedDict]
 	else:
 		stemmedDict = unstemmedDict
@@ -92,21 +95,21 @@ def loadWords(type, stemmer):
 	return [unstemmedDict, stemmedDict]
 
 # get basic positive and negative, unstemmed dictionaries
-positiveWords = loadWords('positive', stemmer="None").pop(0)
-negativeWords = loadWords('negative', stemmer="None").pop(0)
+positiveWords = loadWords('positive', stemmer='None').pop(0)
+negativeWords = loadWords('negative', stemmer='None').pop(0)
 
 # run dictionary acquisition and stemming function for all stemmers
 # (1) Porter
-stemmedPositivePorter = loadWords('positive', stemmer="Porter").pop(1)
-stemmedNegativePorter = loadWords('negative', stemmer="Porter").pop(1)
+stemmedPositivePorter = loadWords('positive', stemmer='Porter').pop(1)
+stemmedNegativePorter = loadWords('negative', stemmer='Porter').pop(1)
 
 # (2) Snowball
-stemmedPositiveSnowball = loadWords('positive', stemmer="Snowball").pop(1)
-stemmedNegativeSnowball = loadWords('negative', stemmer="Snowball").pop(1)
+stemmedPositiveSnowball = loadWords('positive', stemmer='Snowball').pop(1)
+stemmedNegativeSnowball = loadWords('negative', stemmer='Snowball').pop(1)
 
 # (3) Lancaster
-stemmedPositiveLancaster = loadWords('positive', stemmer="Lancaster").pop(1)
-stemmedNegativeLancaster = loadWords('negative', stemmer="Lancaster").pop(1)
+stemmedPositiveLancaster = loadWords('positive', stemmer='Lancaster').pop(1)
+stemmedNegativeLancaster = loadWords('negative', stemmer='Lancaster').pop(1)
 
 # create function that will easily check how many words are in 
 # corresponding dictionary list
@@ -115,7 +118,7 @@ def wordCount(inputStatement, dictionaries):
 # create function to pull necessary info from each statement
 def statementInfo(statement, documentContent, count):
 	# first, need to discard punctuation
-	removedPunctuation = re.sub("\W", " ", i)
+	removedPunctuation = re.sub('\W', ' ', i)
 	# capitalization
 	removedCaps = removedPunctuation.lower()
 	# and tokenization
@@ -124,26 +127,26 @@ def statementInfo(statement, documentContent, count):
     # append documentContent with relevant info
 	documentContent.append({
 	# add to statementIter
-	"statementNumber":  count,
-	"speaker":re.search('^[A-Z]+', statement).group(),
+	'statementNumber':  count,
+	'speaker':re.search('^[A-Z]+', statement).group(),
 	# record the number of ___ in statements w/ no punctuation, caps,
 	# and reduced tokens: 
 	# non-stop words
-	#"NstopWords": len([x for x in reducedStatements if x not in stop_words]),
+	'NstopWords': len([x for x in reducedStatements if x not in stopWords]),
 	# number of positive words
-	"NposWords": wordCount(reducedStatements, positiveWords),
+	'NposWords': wordCount(reducedStatements, positiveWords),
    	# number of negative words
-   	"NnegWords": wordCount(reducedStatements, negativeWords),
+   	'NnegWords': wordCount(reducedStatements, negativeWords),
    	# number of words in each positive and negative using:
    	# (1) Porter stem
-   	"NposPorter": wordCount([nltk.stem.PorterStemmer().stem(y) for y in reducedStatements], stemmedPositivePorter),
-   	"NnegPorter": wordCount([nltk.stem.PorterStemmer().stem(y) for y in reducedStatements], stemmedNegativePorter),
+   	'NposPorter': wordCount([nltk.stem.PorterStemmer().stem(y) for y in reducedStatements], stemmedPositivePorter),
+   	'NnegPorter': wordCount([nltk.stem.PorterStemmer().stem(y) for y in reducedStatements], stemmedNegativePorter),
    	# (2) Snowball stem
-   	"NposSnowball": wordCount([nltk.stem.SnowballStemmer('english').stem(y) for y in reducedStatements], stemmedPositiveSnowball),
-   	"NnegSnowball": wordCount([nltk.stem.SnowballStemmer('english').stem(y) for y in reducedStatements], stemmedNegativeSnowball),
+   	'NposSnowball': wordCount([nltk.stem.SnowballStemmer('english').stem(y) for y in reducedStatements], stemmedPositiveSnowball),
+   	'NnegSnowball': wordCount([nltk.stem.SnowballStemmer('english').stem(y) for y in reducedStatements], stemmedNegativeSnowball),
    	# (3) Lancaster stem
-   	"NposLancaster": wordCount([nltk.stem.LancasterStemmer().stem(y) for y in reducedStatements], stemmedPositiveLancaster),
-   	"NnegLancaster": wordCount([nltk.stem.LancasterStemmer().stem(y) for y in reducedStatements], stemmedNegativeLancaster)})
+   	'NposLancaster': wordCount([nltk.stem.LancasterStemmer().stem(y) for y in reducedStatements], stemmedPositiveLancaster),
+   	'NnegLancaster': wordCount([nltk.stem.LancasterStemmer().stem(y) for y in reducedStatements], stemmedNegativeLancaster)})
    	
 # create empty list to fill with statement info	
 statementCharacteristics = []
@@ -157,10 +160,10 @@ for i in statements:
 
 # with data now assigned to dictionary
 # write content to .csv
-with open('Documents/Git/WUSTL_textAnalysis/statmentInfo.csv', 'wb') as f:
-    w = csv.DictWriter(f, fieldnames=("statementNumber", "speaker",
-    "NposWords", "NnegWords", "NposPorter", "NnegPorter",
-    "NposSnowball", "NnegSnowball", "NposLancaster", "NnegLancaster"))
+with open('Documents/Git/WUSTL_textAnalysis/statementInfo.csv', 'wb') as f:
+    w = csv.DictWriter(f, fieldnames=('statementNumber', 'speaker', 'NstopWords',
+    'NposWords', 'NnegWords', 'NposPorter', 'NnegPorter',
+    'NposSnowball', 'NnegSnowball', 'NposLancaster', 'NnegLancaster'))
     w.writeheader()
     for item in statementCharacteristics:
     	w.writerow(item)
