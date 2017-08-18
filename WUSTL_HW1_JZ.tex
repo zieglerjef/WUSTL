@@ -10,6 +10,7 @@
 \usepackage[all]{xy}
 \usepackage{endnotes}
 \usepackage{lscape}
+\usepackage{float}
 \newtheorem{com}{Comment}
 \newtheorem{lem} {Lemma}
 \newtheorem{prop}{Proposition}
@@ -123,18 +124,90 @@ The data set should have the following columns:}
 Using our new data set, let's make some observations about the debate
 \begin{itemize}
 \item[-] Load the data into {\tt R}
+\end{itemize}
+
+\lstinputlisting[language=R, firstline=1, lastline=4]{WUSTL_HW1_JZ.r}
+
+\begin{itemize}
 \item[-] Create a visualization that compares the overall positive and negative word rate for Obama, Romney, and Lehrer.  What patterns do you notice?  There is no one right answer, be creative!
+\end{itemize}
+
+\lstinputlisting[language=R, firstline=5, lastline=19]{WUSTL_HW1_JZ.r}
+
+\begin{figure}[H]
+  \caption{\footnotesize{Unstemmed word rate.}}
+  \centering
+   \includegraphics[width=.65\linewidth]{HW1wordRatePlot.pdf}\\
+    \footnotesize{Figure notes: Obama is center speaker category that is missing.}
+\end{figure}
+
+\begin{itemize}
 \item[-] Using your data set, examine trends in each candidate's statements and Lehrer's speeches.  Do you notice any
 \begin{itemize}
 \item[i)] Trends in the measured tone?
+\end{itemize}
+\end{itemize}
+
+\lstinputlisting[language=R, firstline=21, lastline=34]{WUSTL_HW1_JZ.r}
+
+\begin{table}[H]
+\centering
+  \caption{\footnotesize{Regression results, positive tone by speaker overtime.}}
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\ 
+  \hline
+(Intercept) & 0.0561 & 0.0302 & 1.86 & 0.0667 \\ 
+  Statement Number & 0.0005 & 0.0003 & 1.62 & 0.1090 \\ 
+  Speaker: Romney & 0.0367 & 0.0407 & 0.90 & 0.3689 \\ 
+  Statement Number:Romney& -0.0005 & 0.0004 & -1.27 & 0.2058 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\begin{itemize}
 \item[ii)] Response to the other candidate's tone (examining who spoke previously)?
+\end{itemize}
+
+\lstinputlisting[language=R, firstline=36, lastline=48]{WUSTL_HW1_JZ.r}
+
+\begin{table}[H]
+\centering
+  \caption{\footnotesize{Regression results, positive tone by previous speaker overtime.}}
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\ 
+  \hline
+(Intercept) & 0.1142 & 0.0458 & 2.49 & 0.0144 \\ 
+Statement Number & 0.0001 & 0.0005 & 0.21 & 0.8325 \\ 
+Previous speaker & -0.0255 & 0.0314 & -0.81 & 0.4191 \\ 
+  Statement Number:Previous speaker  & 0.0000 & 0.0004 & 0.12 & 0.9076 \\ 
+   \hline
+\end{tabular}\\
+    \footnotesize{Notes: Assume moderator influences tone of candidates, but don't care if moderator is influenced by respondents.}
+\end{table}
+
+\begin{itemize}
 \item[iii)] Overall interesting patterns? (this is an intentionally vague question)
 \end{itemize}
-\end{itemize}
 
+\lstinputlisting[language=R, firstline=49]{WUSTL_HW1_JZ.r}
 
-
-
+\begin{table}[H]
+\centering
+  \caption{\footnotesize{Regression results, positive tone by previous speaker (only candidates) overtime.}}
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\ 
+  \hline
+(Intercept) & 0.2261 & 0.1692 & 1.34 & 0.1848 \\ 
+  Statement Number & -0.0019 & 0.0018 & -1.07 & 0.2857 \\ 
+  Previous speaker & -0.0374 & 0.0651 & -0.58 & 0.5667 \\ 
+  Statement Number:Previous speaker & 0.0006 & 0.0007 & 0.86 & 0.3938 \\ 
+   \hline
+\end{tabular}\\
+    \footnotesize{Notes: Remove moderator speech, and assume that moderator doesn't influence tone of respondents.}
+\end{table}
 
 
 

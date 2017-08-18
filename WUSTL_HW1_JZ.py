@@ -132,7 +132,7 @@ def statementInfo(statement, documentContent, count):
 	# record the number of ___ in statements w/ no punctuation, caps,
 	# and reduced tokens: 
 	# non-stop words
-	'NstopWords': len([x for x in reducedStatements if x not in stopWords]),
+	'NonstopWords': len([x for x in reducedStatements if x not in stopWords]),
 	# number of positive words
 	'NposWords': wordCount(reducedStatements, positiveWords),
    	# number of negative words
@@ -161,7 +161,7 @@ for i in statements:
 # with data now assigned to dictionary
 # write content to .csv
 with open('Documents/Git/WUSTL_textAnalysis/statementInfo.csv', 'wb') as f:
-    w = csv.DictWriter(f, fieldnames=('statementNumber', 'speaker', 'NstopWords',
+    w = csv.DictWriter(f, fieldnames=('statementNumber', 'speaker', 'NonstopWords',
     'NposWords', 'NnegWords', 'NposPorter', 'NnegPorter',
     'NposSnowball', 'NnegSnowball', 'NposLancaster', 'NnegLancaster'))
     w.writeheader()
