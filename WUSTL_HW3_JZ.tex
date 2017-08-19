@@ -11,6 +11,7 @@
 \usepackage[all]{xy}
 \usepackage{endnotes}
 \usepackage{lscape}
+\usepackage{float}
 \newtheorem{com}{Comment}
 \newtheorem{lem} {Lemma}
 \newtheorem{prop}{Proposition}
@@ -59,6 +60,8 @@
 \newtheorem{hyp}{Hypothesis}
 
 \title{Text as Data: Homework 3}
+\date{August 17, 2017}
+\author{Jeff Ziegler}
 
 \begin{document}
 \maketitle
@@ -96,11 +99,22 @@ In this homework we will analyze a collection of news stories from the New York 
 
 \lstinputlisting[language=Python, firstline=37, lastline=126]{WUSTL_HW3_JZ.py}
 
-
 \subsection*{Clustering Methods}
 
 \begin{itemize}
-\item[1)] Using the {\tt kmeans} function, create a plot of the {\tt kmeans} objective function as the number of clusters varies from 2 to $N - 1$.    
+\item[1)] Using the {\tt kmeans} function, create a plot of the {\tt kmeans} objective function as the number of clusters varies from 2 to $N - 1$.  
+\end{itemize}
+  
+\lstinputlisting[language=R, firstline=1, lastline=30]{WUSTL_HW3_JZ.r}  
+  
+\begin{figure}[H]
+  \caption{\footnotesize{{\tt kmeans} objective function as number of clusters varies.}}
+  \centering
+   \includegraphics[width=.7\linewidth]{HW3kmeansClusters.pdf}\\
+\end{figure}
+  
+  
+ \begin{itemize}
 \item[2)] Apply K-Means with 6 clusters, being sure to use {\tt set.seed} to ensure you can replicate your analysis
 \item[3)] Label each cluster using computer and hand methods:
 \begin{itemize}
@@ -109,10 +123,26 @@ In this homework we will analyze a collection of news stories from the New York 
 \text{Diff}_{k} & = & \boldsymbol{\theta}_{k} - \bar{\boldsymbol{\theta}}_{-k}\nonumber 
 \end{eqnarray}
 
+\lstinputlisting[language=R, firstline=31, lastline=68]{WUSTL_HW3_JZ.r}  
+
 Use the top ten words from $\text{Diff}_{k}$ to label the clusters
 \item[ii)] Sample and read texts assigned to each cluster and produce a hand label
 \end{itemize}
 \end{itemize}
+
+\lstinputlisting[language=R, firstline=70, lastline=80]{WUSTL_HW3_JZ.r}  
+
+\begin{Verbatim}[fontsize=\small]
+[1] "title": "Secret of Success Lies in Minnesota",
+"body_text": "From the fourth play of the game, when a small 
+band of Giants seized an opportunity as the ball bounced free 
+on the Minnesota Vikings' turf, the Giants played Sunday as if 
+they were the only ones in on a secret... <truncated>
+[1] "title": "Arts, Briefly", "body_text": "Managing Janet Jackson
+Janet Jackson, below, may have caused a furor with her breast-baring
+wardrobe malfunction during the halftime show at the Super Bowl,
+but her album ''Damita Jo,'' issued by Virgin in March, didn't... <truncated>
+\end{Verbatim}
 
 \section{Dictionary Classification Methods}
 \begin{itemize}
@@ -125,6 +155,50 @@ Use the top ten words from $\text{Diff}_{k}$ to label the clusters
 \begin{itemize}
 \item[c)] How does the score change before and after the election?  How does the score vary across desks?
 \end{itemize}
+
+\lstinputlisting[language=R, firstline=82, lastline=98]{WUSTL_HW3_JZ.r}  
+
+\begin{table}[H] \centering 
+  \caption{Regression results of sentimental change.} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & NposPorter & NnegPorter \\ 
+\\[-1.8ex] & (1) & (2)\\ 
+\hline \\[-1.8ex] 
+Election day & $-$0.003 & $-$0.001 \\ 
+  & (0.002) & (0.002) \\ 
+Day after election & 0.001 & $-$0.002 \\ 
+  & (0.002) & (0.002) \\ 
+ Editorial Desk & 0.013$^{***}$ & 0.015$^{***}$ \\ 
+  & (0.004) & (0.003) \\ 
+ Foreign Desk & $-$0.005 & 0.013$^{***}$ \\ 
+  & (0.003) & (0.003) \\ 
+ Health and Fitness & 0.016$^{***}$ & 0.011$^{**}$ \\ 
+  & (0.006) & (0.005) \\ 
+ Metropolitan Desk & $-$0.001 & 0.010$^{*}$ \\ 
+  & (0.006) & (0.006) \\ 
+ National Desk & 0.003 & 0.007$^{***}$ \\ 
+  & (0.002) & (0.002) \\ 
+ Science Desk & 0.002 & 0.001 \\ 
+  & (0.006) & (0.006) \\ 
+ Sports Desk & 0.002 & $-$0.0002 \\ 
+  & (0.003) & (0.003) \\ 
+ The Arts/Cultural Desk & 0.011$^{***}$ & 0.005$^{**}$ \\ 
+  & (0.003) & (0.003) \\ 
+ Constant & 0.054$^{***}$ & 0.033$^{***}$ \\ 
+  & (0.002) & (0.002) \\ 
+\hline \\[-1.8ex] 
+Observations & 288 & 288 \\ 
+R$^{2}$ & 0.144 & 0.144 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
 
 \section{Supervised Learning with Naive Bayes}
 
