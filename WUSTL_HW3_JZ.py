@@ -74,7 +74,7 @@ unigramDict = {}
 # for each story
 for story in range(0,len(NYTjson)):
 	# add counts to totals
-    for word in NYTjson[10]['body']['cleanText']:
+    for word in NYTjson[story]['body']['cleanText']:
         if word not in unigramDict:
             unigramDict[word] = 1
         else:

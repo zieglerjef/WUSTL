@@ -130,18 +130,21 @@ Use the top ten words from $\text{Diff}_{k}$ to label the clusters
 \end{itemize}
 \end{itemize}
 
-\lstinputlisting[language=R, firstline=70, lastline=80]{WUSTL_HW3_JZ.r}  
+\lstinputlisting[language=R, firstline=70, lastline=82]{WUSTL_HW3_JZ.r}  
 
-\begin{Verbatim}[fontsize=\small]
-[1] "title": "Secret of Success Lies in Minnesota",
-"body_text": "From the fourth play of the game, when a small 
-band of Giants seized an opportunity as the ball bounced free 
-on the Minnesota Vikings' turf, the Giants played Sunday as if 
-they were the only ones in on a secret... <truncated>
-[1] "title": "Arts, Briefly", "body_text": "Managing Janet Jackson
-Janet Jackson, below, may have caused a furor with her breast-baring
-wardrobe malfunction during the halftime show at the Super Bowl,
-but her album ''Damita Jo,'' issued by Virgin in March, didn't... <truncated>
+\begin{Verbatim}[fontsize=\footnotesize]
+[1] ""title": "Red-Zone Forays Put Giants in the Black",
+"body_text": "The Giants did not exactly become an offensive 
+juggernaut in Sunday's victory over Minnesota. They gained
+283 yards, collected 83 yards in penalties from the Vikings and 
+absorbed five sacks, and quarterback Kurt Warner fumbled 
+three snaps... <truncated>
+[2]""title": "G.O.P. in Ohio Can Challenge Voters at Polls", 
+"body_text": "In a day of see-sawing court rulings, a Federal appeals 
+court ruled early Tuesday morning that the Republican Party could 
+place thousands of people inside polling places to challenge the
+eligibility of voters, a blow to Democrats who argued those challengers
+ will intimidate minority voters... <truncated>
 \end{Verbatim}
 
 \section{Dictionary Classification Methods}
@@ -156,7 +159,7 @@ but her album ''Damita Jo,'' issued by Virgin in March, didn't... <truncated>
 \item[c)] How does the score change before and after the election?  How does the score vary across desks?
 \end{itemize}
 
-\lstinputlisting[language=R, firstline=82, lastline=98]{WUSTL_HW3_JZ.r}  
+\lstinputlisting[language=R, firstline=84, lastline=100]{WUSTL_HW3_JZ.r}  
 
 \begin{table}[H] \centering 
   \caption{Regression results of sentimental change.} 
@@ -214,7 +217,6 @@ R$^{2}$ & 0.144 & 0.144 \\
 How does Naive Bayes compare? 
 \end{itemize}
 
-
-
+\lstinputlisting[language=R, firstline=102]{WUSTL_HW3_JZ.r}  
 
 \end{document}

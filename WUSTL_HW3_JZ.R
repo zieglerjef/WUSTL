@@ -1,7 +1,7 @@
 # Problem 1
 
 # load libraries and .csv files
-library(foreign); library(fpc)
+library(foreign); library(fpc); library(data.table); library(glmnet); library(e1071)
 NYTstoryDTM <- read.csv("~/Documents/Git/WUSTL_textAnalysis/NYTstoriesDTM.csv", row.names=NULL)[,-2]
 
 # a) task: use kmeans function to creat
@@ -76,8 +76,10 @@ exploreClusters <- function(seed, k, nDocs){
   }
 }
 
-# these articles seem to be more human interest, rather than hard-hitting news
-exploreClusters(5, 3, 2)
+# these articles don't seem to match well, maybe
+# they are grouped together cause they are talking 
+# about "battles" and competing (on the field and in the courtroom)
+exploreClusters(5, 5, 2)
 
 # Problem 2
 
@@ -96,3 +98,35 @@ summary(posToneLM);summary(negToneLM)
 # some desks like health and culture are more "upbeat"
 # and then the editorial, national, and foreign ("hard news") is slightly 
 # more negative
+
+# Problem 3
+# run naive bayes w/ leave one out validation
+# find random validation observation
+# and create training and test set
+# first, create dichotomy noting the specified categories
+# Business/Financial desk and National Desk
+NYTstoryDTM$row.names <- ifelse(as.character(NYTstoryDTM$row.names)=='Business/Financial Desk' |
+                                  as.character(NYTstoryDTM$row.names)=='National Desk', 1, 0)
+set.seed(1)
+randomObservation <- sample(which(NYTstoryDTM$row.names==1), 1)
+trainingSet <- NYTstoryDTM[-randomObservation,]
+validation <- NYTstoryDTM[randomObservation,]
+
+# run naive bayes classifier
+nbResults <- naiveBayes(trainingSet[,1]~., data=trainingSet)
+# predict validation observation
+default_pred <- predict(nbResults, as.matrix(validation[,-1]))
+# predicts 0, which is incorrect
+
+# c) use lasso and ridge
+# run cv.glmnet w/ 10 folds and alpha = 1 for lasso, alpha=0 for ridge
+lassoModel <- cv.glmnet(x = as.matrix(trainingSet[,-1]), y = trainingSet[,1], alpha = 1,
+                       nfolds=10, family="binomial", type.measure="mse")
+ridgeModel <- cv.glmnet(x = as.matrix(trainingSet[,-1]), y = trainingSet[,1], alpha = 0,
+                        nfolds=10, family="binomial", type.measure="mse")
+# predict category for both models
+# by seeing if predicted probabilites > 0.5
+predictedProbs <- c(1/(1 + exp(-predict(lassoModel, newx = as.matrix(validation[,-1]), s = lassoModel$lambda.min))),
+                    1/(1 + exp(-predict(ridgeModel, newx = as.matrix(validation[,-1]), s = ridgeModel$lambda.min))))
+# [1] 0.6638116 0.6748607
+# both seem to do better than the naive bayes
