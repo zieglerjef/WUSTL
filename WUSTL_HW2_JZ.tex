@@ -6,6 +6,7 @@
 \usepackage{color}
 \usepackage[reqno]{amsmath}
 \usepackage{amsthm}
+\usepackage{fancyvrb}
 \usepackage{amssymb,enumerate}
 \usepackage[all]{xy}
 \usepackage{endnotes}
@@ -159,7 +160,7 @@ and converts it to\\
 {\tt text}  allows the placement of texts on plots. Can we learn anything about how Jeff Sessions and Richard Shelby present their work to their constituents?\\
 \end{itemize}
 
-\lstinputlisting[language=R, firstline=70]{WUSTL_HW2_JZ.r}
+\lstinputlisting[language=R, firstline=70, lastline=103]{WUSTL_HW2_JZ.r}
 
 \begin{itemize}
 \item[3)] Compare the discriminating measures in 3 plots.  What are the primary differences across the measures?
@@ -168,13 +169,13 @@ and converts it to\\
 \begin{figure}[H]
   \caption{\footnotesize{Word separation measures for unigrams.}}
   \centering
-   \includegraphics[width=.65\linewidth]{HW2wordDistanceUnigrams.pdf}\\
+   \includegraphics[width=.6\linewidth]{HW2wordDistanceUnigrams.pdf}\\
 \end{figure}
 
 \begin{figure}[H]
   \caption{\footnotesize{Word separation measures for trigrams.}}
   \centering
-   \includegraphics[width=.65\linewidth]{HW2wordDistanceTrigrams.pdf}\\
+   \includegraphics[width=.6\linewidth]{HW2wordDistanceTrigrams.pdf}\\
 \end{figure}
 
 \noindent Both senators seem to talk about legislation and politics.
@@ -184,8 +185,6 @@ and converts it to\\
 Using the trigram word document matrix, let's compare 100 Shelby press releases to 100 Sessions press releases.
 \begin{itemize}
 \item[1)] Devise a method to sample 100 press releases from each senator's collection
-
-
 \item[2)] Create the following six matrices:
 \begin{itemize}
 \item[i)] Euclidean distance between documents
@@ -202,6 +201,23 @@ Then apply the {\tt Gaussian} kernel to the normalized matrices
 \item[3)] Using the matrices, identify the most similar (smallest distance) and dissimilar (greatest distance) press releases.  Read the pairs of press releases---do they appear to actually be similar?  Which method appears to perform best?
 \end{itemize}
 
+\lstinputlisting[language=R, firstline=105,]{WUSTL_HW2_JZ.r}
 
+\begin{Verbatim}
+# there are a lot of ties, but some reasonable reasonable similar documents were:
+> findSimilarDocs(ngkTFIDF)
+    row col
+941  67  67
+> findSimilarDocs(euclideanDistMatrix)
+    row col
+747  43  36
+799  36  43
+> findSimilarDocs(ngkTFIDF)
+    row col
+941  67  67
+> findSimilarDocs(cosineTFIDF)
+    row col
+648  32  32
+\end{Verbatim}
 
 \end{document}

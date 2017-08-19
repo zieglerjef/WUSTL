@@ -1,5 +1,5 @@
 # load libraries and .csv files
-library(foreign); library(dplyr); library(tidyr); library(matrixStats)
+library(foreign); library(dplyr); library(tidyr); library(matrixStats); library(lsa); library(KRLS)
 
 # since I was unable to properly clean the files in python...
 # remove weird second column
@@ -105,15 +105,71 @@ dev.off()
 ### Problem 3
 
 # sample 100 documents from Shelby and Sessions
-shelbySample <- rbind(trigrams[sample(which(trigrams$senator=="Shelby"), 100, replace=F),], 
+trigramsSample <- rbind(trigrams[sample(which(trigrams$senator=="Shelby"), 100, replace=F),], 
                       trigrams[sample(which(trigrams$senator=="Sessions"), 100, replace=F),])
 
-library(tm)
-library(RTextTools)
-library(lsa)
-library(cluster)
-library(fpc)
+# find different document difference measures
 
+# i) Euclidean distance
+# since we now have the sample in a matrix
+# compute the distance matrix by measuring
+# distances between the rows of a data matrix
+# since we're measuring the length between vectors
+# and the press releases are represented as vectors in each row
+euclideanDistMatrix <- as.matrix(dist(trigramsSample, method = "euclidean"))
 
-d <- dist(dtm.m, method = "euclidean")
+# ii) Euclidean distance with tf-idf weights
+# first, get idf = log((total documents)/(number of docs with the term))
+# since these are trigrams, this will severely down weight
+euclideanIDF <- log(nrow(euclideanDistMatrix)/colSums(euclideanDistMatrix))
+# create TI-IDF matrix to fill
+euclideanTFIDF <- euclideanDistMatrix
+# now take the inner product
+for(word in names(euclideanIDF)){
+  euclideanTFIDF[,word] <- euclideanDistMatrix[,word] * euclideanIDF[word]
+}
 
+# iii) Cosine similarity 
+# calculate cosine of the each transposed row
+cosineSimilarMatrix <- as.matrix(cosine((euclideanDistMatrix)))
+
+# iv) Cosine similarity with tf-idf weights
+cosineIDF <- log(nrow(cosineSimilarMatrix)/colSums(cosineSimilarMatrix))
+# create TI-IDF matrix to fill
+cosineTFIDF <- cosineSimilarMatrix
+# now take the inner product
+for(word in names(cosineIDF)){
+  cosineTFIDF[,word] <- cosineSimilarMatrix[,word] * cosineIDF[word]
+}
+
+# v) normalize rows of the trigram document term matrix
+trigramNorm <- trigramsSample[,-1]
+for (i in 1:nrow(trigramNorm)){
+  trigramNorm[i,]<- trigramNorm[i,]/sum(trigramNorm[i,])
+}
+# w/ Gaussian kernel
+# k(x_i,x_j) = exp(− || x_i − x+j || ^2) / sigma^2
+trigramNormGaussian <- gausskernel(trigramNorm,1)
+
+# vi) normalize Gaussian kernel with tf-idf weights
+ngkIDF <- log(nrow(trigramNormGaussian)/colSums(trigramNormGaussian))
+# create TI-IDF matrix to fill
+ngkTFIDF <- trigramNormGaussian
+# now take the inner product
+for(word in names(ngkIDF)){
+  ngkTFIDF[,word] <- trigramNormGaussian[,word] * ngkIDF[word]
+}
+
+### Problem 3
+
+# find most similar documents in each matrix
+findSimilarDocs <- function(inputMatrix){
+  which(inputMatrix == max(inputMatrix), arr.ind = TRUE)
+}
+
+findSimilarDocs(euclideanDistMatrix)
+findSimilarDocs(euclideanTFIDF)
+findSimilarDocs(cosineSimilarMatrix)
+findSimilarDocs(cosineTFIDF)
+findSimilarDocs(trigramNormGaussian)
+findSimilarDocs(ngkTFIDF)
