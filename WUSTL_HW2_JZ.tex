@@ -11,6 +11,7 @@
 \usepackage{endnotes}
 \usepackage{lscape}
 \newtheorem{com}{Comment}
+\usepackage{float}
 \newtheorem{lem} {Lemma}
 \newtheorem{prop}{Proposition}
 \newtheorem{thm}{Theorem}
@@ -138,7 +139,6 @@ and converts it to\\
 
 \subsubsection*{Applying Word Separating Algorithms}
 
-
 \begin{itemize}
 \item[1)] Using the document-term matrix, for both unigrams and trigrams create the following three measures of word separation
 \begin{itemize}
@@ -149,18 +149,43 @@ and converts it to\\
 \end{eqnarray}
 \item[iii)] Standardized Log Odds$\leadsto$ as described in Monroe, Colaresi, and Quinn (2009). To create the scores,  set $\alpha_{j} = 1$
 \end{itemize}
+\end{itemize}
+
+\lstinputlisting[language=R, firstline=1, lastline=69]{WUSTL_HW2_JZ.r}
+
+\begin{itemize}
 \item[2)] Create a plot for each of the measures that shows the most discriminating words.  Some helpful functions are \\
 {\tt plot}, but set {\tt pch = `'} \\
-{\tt text}  allows the placement of texts on plots. \\
-Can we learn anything about how Jeff Sessions and Richard Shelby present their work to their constituents?\\
+{\tt text}  allows the placement of texts on plots. Can we learn anything about how Jeff Sessions and Richard Shelby present their work to their constituents?\\
+\end{itemize}
+
+\lstinputlisting[language=R, firstline=70]{WUSTL_HW2_JZ.r}
+
+\begin{itemize}
 \item[3)] Compare the discriminating measures in 3 plots.  What are the primary differences across the measures?
 \end{itemize}
+
+\begin{figure}[H]
+  \caption{\footnotesize{Word separation measures for unigrams.}}
+  \centering
+   \includegraphics[width=.65\linewidth]{HW2wordDistanceUnigrams.pdf}\\
+\end{figure}
+
+\begin{figure}[H]
+  \caption{\footnotesize{Word separation measures for trigrams.}}
+  \centering
+   \includegraphics[width=.65\linewidth]{HW2wordDistanceTrigrams.pdf}\\
+\end{figure}
+
+\noindent Both senators seem to talk about legislation and politics.
 
 \subsubsection*{Comparing Document Similarity}
 
 Using the trigram word document matrix, let's compare 100 Shelby press releases to 100 Sessions press releases.
 \begin{itemize}
 \item[1)] Devise a method to sample 100 press releases from each senator's collection
+
+
 \item[2)] Create the following six matrices:
 \begin{itemize}
 \item[i)] Euclidean distance between documents

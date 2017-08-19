@@ -127,19 +127,28 @@ mostNtrigrams = mostNtrigrams[:500]
 # task: we need to check whether each of the top 1000 words
 # is in each press release, and count their frequency
 # will iterate over each press release
+# first, open up .csv writer
 with open('Documents/Git/WUSTL_textAnalysis/PRunigrams.csv', 'wb') as f:
     w = csv.writer(f)
+    # create header to be written to .csv as variable names
+    # 1st column is senator name, preceding columns 
+    # represent top 1000 unigrams
     csvHeader = mostNunigrams
     csvHeader.insert(0,'senator')
+    # write header first
     w.writerow(csvHeader)
-    for PR in range(0,len(pressReleases['text'])):
-	# then, we need to create counts of all the words 
+    # then, we need to create counts of all the words 
 	# in each document (NOT across authors or 
-	# documents like the previous problem)(
+	# documents like the previous problem)
+	# so, for each press release
+    for PR in range(0,len(pressReleases['text'])):
+    # create a clear row
 	rowEntry = []
+	# and give each unigram count in that press release
 	for unigram in mostNunigrams:
 		rowEntry.append(pressReleases['unigramTokens'][PR].count(unigram))
 	rowEntry.insert(0,pressReleases['senator'][PR])
+	# write row
 	w.writerow(rowEntry)
     	
 # now do for trigrams as well	
@@ -149,9 +158,6 @@ with open('Documents/Git/WUSTL_textAnalysis/PRtrigrams.csv', 'wb') as f:
     csvHeader.insert(0,'senator')
     w.writerow(csvHeader)
     for PR in range(0,len(pressReleases['text'])):
-	# then, we need to create counts of all the words 
-	# in each document (NOT across authors or 
-	# documents like the previous problem)(
 	rowEntry = []
 	for trigram in mostNtrigrams:
 		rowEntry.append(pressReleases['trigramTokens'][PR].count(trigram))
