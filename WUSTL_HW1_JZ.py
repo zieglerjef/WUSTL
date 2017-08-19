@@ -118,7 +118,7 @@ def wordCount(inputStatement, dictionaries):
 # create function to pull necessary info from each statement
 def statementInfo(statement, documentContent, count):
 	# first, need to discard punctuation
-	removedPunctuation = re.sub('\W', ' ', i)
+	removedPunctuation = re.sub('\W', ' ', inputStatement)
 	# capitalization
 	removedCaps = removedPunctuation.lower()
 	# and tokenization

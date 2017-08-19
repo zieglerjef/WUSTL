@@ -63,7 +63,7 @@ for PR in range(0,len(pressReleases['text'])):
 	# remove capitalization 
 	textTokens = pressReleases['text'][PR].lower()
 	# discard punctuation by removing non-word characters
-	textTokens = re.sub("\W", " ", textTokens)
+	textTokens = re.sub('\W', ' ', textTokens)
 	# and apply Porter stem to tokenized PRs
 	textTokens = porterStem(nltk.word_tokenize(textTokens))
 	# remove stop words
