@@ -1,7 +1,7 @@
 # Problem 1
 
 # load libraries and .csv files
-library(glmnet); library(data.table)
+library(glmnet); library(data.table); library(randomForest)
 load("~/Documents/Git/WUSTL_textAnalysis/StudentDrinking.RData")
 
 # i) fit a linear regression of alcohol on the covariates in the included data
@@ -40,15 +40,45 @@ dev.off()
 
 
 # Problem 2
-#
+
 set.seed(4) 
 # i) create the validation set
-portugalAlcohol <- data.table(alcohol, X)
-validationSet <- portugalAlcohol[1:20,]
-
+alcoholValid <- alcohol[c(1:20)]; xValid <- X[c(1:20),]
+alcoholTraining <- alcohol[-c(1:20)]; xTraining <- X[-c(1:20),]
 # w/ the training data (all but the first 20 rows) perform 10 fold CV including:
-# (1) linear regression, (2) LASSO, (3) Ridge, (4) Elastic-Net, and (5) Random Forest
-# obtain 5 predictions for each observation in the training set, one from each observation
-
 # create 10 folds  
-folds <- sample(1:10, nrow(portugalAlcohol[-c(1:20),]), replace=T)
+folds <- sample(1:10, length(alcoholTraining), replace=T)
+# create vectors to fill with predicted values
+olsPredictions <- c(); lassoPredictions <- c(); ridgePredictions <- c(); 
+elasticPredictions <- c(); randomPredictions <- c()
+# for each fold
+for(i in 1:10){
+  # find which observations are included in fold and which aren't
+  trainingData <- which(folds!=i)
+  testData <- which(folds==i)
+  # (1) linear regression
+  olsTrain <- lm(alcoholTraining[trainingData] ~ xTraining[trainingData, ])
+  # get predicted value
+  olsPredictions[testData] <- predict(olsTrain, newdata=as.data.frame(xTraining[testData, ]))
+  # (2) lasso
+  # alpha = 1 for lasso, alpha=0 for ridge
+  lassoTrain <- cv.glmnet(y = alcoholTraining[trainingData], x = xTraining[trainingData, ], alpha = 1)
+  # get predicted value
+  lassoPredictions[testData] <- predict(lassoTrain, newx= xTraining[testData, ], s = lassoTrain$lambda.min) 
+  # (3) ridge
+  ridgeTrain <- cv.glmnet(y = alcoholTraining[trainingData], x = xTraining[trainingData, ], alpha = 0)
+  # get predicted value
+  ridgePredictions[testData] <- predict(ridgeTrain, newx= xTraining[testData, ], s = ridgeTrain$lambda.min,type = "class") 
+  # (4) elatist-net
+  elasticTrain <- cv.glmnet(y = alcoholTraining[trainingData], x = xTraining[trainingData, ], alpha = 0.5)
+  # get predicted value
+  elasticPredictions[testData] <- predict(elasticTrain, newx= xTraining[testData, ], s = elasticTrain$lambda.min,type = "class") 
+  # (5) random forest
+  #randomTrain <- randomForest(alcoholTraining[trainingData] ~ xTraining[trainingData, ])
+  # get predicted value
+  # randomPredictions[testData] <- predict(randomTrain, xTraining[testData,])
+}
+# 
+# obtain weights
+modelWeights <- lm(alcoholTraining ~ cbind(olsPredictions, lassoPredictions, ridgePredictions, elasticPredictions) -1)
+
