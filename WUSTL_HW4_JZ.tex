@@ -113,15 +113,74 @@ We're going to assess the performance of five models, an unweighted average, and
 \end{itemize}
 \end{itemize}
 
-\lstinputlisting[language=R, firstline=42, lastline=83]{WUSTL_HW4_JZ.r}  
+\lstinputlisting[language=R, firstline=42, lastline=84]{WUSTL_HW4_JZ.r}  
+
+\begin{table}[H] \centering 
+  \caption{\footnotesize{Model weights from regression of alcohol on the out of sample predictions for each model.} }
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & Estimated coefficient ($\boldsymbol{w}$) & Std. Error \\ 
+  \hline
+OLS Predictions & 0.0433 & 0.0631 \\ 
+Lasso Predictions & 0.1050 & 3.7391 \\ 
+Ridge Predictions & -0.4370 & 0.7474 \\ 
+Elastic Predictions & 0.9345 & 4.2089\\ 
+Random Predictions & 0.3639 & 0.1797 \\ 
+   \hline
+\end{tabular}
+\end{table}
 
 \begin{itemize}
 \item[iii)] Now, fit all 5 models from (ii)-(a) to the entire training data set and predict the drinking level from the validation set (the data put off to the side).
+\end{itemize}
+
+\lstinputlisting[language=R, firstline=86, lastline=112]{WUSTL_HW4_JZ.r}  
+
+\begin{table}[H] \centering 
+  \caption{\footnotesize{Predicted alcohol category by model (rounded to nearest integer).} }
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+  \footnotesize{Alcohol (validation set)} & \footnotesize{OLS preds} & \footnotesize{Lasso preds} & \footnotesize{Ridge preds} & \footnotesize{Elastic-Net preds} & \footnotesize{Random Forest preds} \\ 
+  \hline
+ 2 & 4 & 4 & 4 & 4 & 4 \\ 
+   2 & 3 & 3 & 3 & 3 & 3 \\ 
+   5 & 2 & 3 & 3 & 3 & 3 \\ 
+   2 & 2 & 2 & 2 & 2 & 3 \\ 
+   3 & 2 & 3 & 3 & 3 & 3 \\ 
+   3 & 3 & 3 & 3 & 3 & 4 \\ 
+   2 & 5 & 5 & 4 & 5 & 4 \\ 
+   2 & 4 & 4 & 4 & 4 & 4 \\ 
+   2 & 3 & 3 & 3 & 3 & 3 \\ 
+   2 & 2 & 2 & 3 & 2 & 3 \\ 
+   3 & 3 & 3 & 3 & 3 & 3 \\ 
+   2 & 2 & 2 & 2 & 2 & 3 \\ 
+   4 & 4 & 4 & 4 & 4 & 3 \\ 
+   3 & 4 & 4 & 4 & 4 & 3 \\ 
+   2 & 3 & 3 & 3 & 3 & 3 \\ 
+   3 & 4 & 4 & 4 & 4 & 5 \\ 
+   3 & 3 & 3 & 3 & 3 & 3 \\ 
+   2 & 2 & 2 & 2 & 2 & 3 \\ 
+   6 & 6 & 5 & 6 & 5 & 7 \\ 
+   4 & 4 & 4 & 4 & 4 & 4 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\begin{itemize}
 \item[iv)]   Obtain two ensemble predictions.
 \begin{itemize}
 \item[a)] Take the unweighted average of the predictions from the methods
 \item[b)] Take the weighted average, using the weights $\boldsymbol{w}$.
 \end{itemize}
+\end{itemize}
+
+\lstinputlisting[language=R, firstline=114, lastline=120]{WUSTL_HW4_JZ.r}  
+
+\begin{itemize}
 \item[v)] You should have 7 predictions. Store those in a matrix and report the correlation between the predictions
 \item[vi)] Using the average absolute difference as a loss function assess the performance of each method.  Which method performs best?  Which performs the worst?
 
@@ -130,14 +189,27 @@ We're going to assess the performance of five models, an unweighted average, and
 L(\boldsymbol{Y}, \widehat{\boldsymbol{Y}}_{k}) & = & \sum_{i=1}^{N_{\text{validation}}} \frac{|Y_{i} - \widehat{Y}_{ik}| }{ N_{\text{validation}} }\nonumber
 \end{eqnarray}
 where $N_{\text{validation}}$ refers to the number of observations in the validation set $\widehat{\boldsymbol{Y}}_{k}$ refers to the predictions from the $k^{\text{th}}$ method,
-
-
 \end{itemize}
 
+\lstinputlisting[language=R, firstline=121, lastline=130]{WUSTL_HW4_JZ.r}  
 
-
-
-
-
+\begin{table}[H] \centering 
+  \caption{\footnotesize{Average absolute difference for each method.} }
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ Model & $L(\boldsymbol{Y}, \widehat{\boldsymbol{Y}}_{k})$ \\ 
+  \hline
+OLS  & 0.838 \\ 
+Lasso  & 0.847 \\ 
+Ridge  & 0.836  \\ 
+Elastic-Net & 0.845\\ 
+Random Forest & 0.999 \\
+Unweighted model average & 0.7\\
+Weighted model average & 0.7\\ 
+   \hline
+\end{tabular}
+\end{table}
 
 \end{document}

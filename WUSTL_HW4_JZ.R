@@ -74,11 +74,56 @@ for(i in 1:10){
   # get predicted value
   elasticPredictions[testData] <- predict(elasticTrain, newx= xTraining[testData, ], s = elasticTrain$lambda.min,type = "class") 
   # (5) random forest
-  #randomTrain <- randomForest(alcoholTraining[trainingData] ~ xTraining[trainingData, ])
+  randomTrain <- randomForest(y = alcoholTraining[trainingData], x = xTraining[trainingData, ])
   # get predicted value
-  # randomPredictions[testData] <- predict(randomTrain, xTraining[testData,])
+  randomPredictions[testData] <- predict(randomTrain, newdata=as.data.frame(xTraining[testData, ]))
 }
 # 
 # obtain weights
-modelWeights <- lm(alcoholTraining ~ cbind(olsPredictions, lassoPredictions, ridgePredictions, elasticPredictions) -1)
+modelWeights <- lm(alcoholTraining ~ cbind(olsPredictions, lassoPredictions, ridgePredictions,
+                                           elasticPredictions, randomPredictions) -1)$coefficients
 
+# iii) fit all 5 models from (ii)-(a) to the entire training data set
+# and predict the drinking level from the validation set
+# (1) linear regression
+olsTrain <- lm(alcoholTraining ~ ., data=as.data.frame(cbind(alcoholTraining, xTraining)))
+# get predicted value
+olsPredictions <- predict(olsTrain, newdata=as.data.frame(xValid))
+# (2) lasso
+# alpha = 1 for lasso, alpha=0 for ridge
+lassoTrain <- cv.glmnet(y = alcoholTraining, x = xTraining, alpha = 1)
+# get predicted value
+lassoPredictions <- predict(lassoTrain, newx= xValid, s = lassoTrain$lambda.min) 
+# (3) ridge
+ridgeTrain <- cv.glmnet(y = alcoholTraining, x = xTraining, alpha = 0)
+# get predicted value
+ridgePredictions <- predict(ridgeTrain, newx= xValid, s = ridgeTrain$lambda.min,type = "class") 
+# (4) elatist-net
+elasticTrain <- cv.glmnet(y = alcoholTraining, x = xTraining, alpha = 0.5)
+# get predicted value
+elasticPredictions <- predict(elasticTrain, newx= xValid, s = elasticTrain$lambda.min,type = "class") 
+# (5) random forest
+randomTrain <- randomForest(y = alcoholTraining, x = xTraining)
+# get predicted value
+randomPredictions <- predict(randomTrain, newdata=as.data.frame(xValid))
+
+# predict the drinking level from the validation set (the data put off to the side).
+predictedAlcohol <- round(cbind(alcoholValid, olsPredictions, lassoPredictions, ridgePredictions, elasticPredictions, randomPredictions))
+# check how many observations each model predicted correctly
+
+# iv) Obtain two ensemble predictions:
+# a) unweighted average of the predictions from the methods
+unweightedModelAverage <- round((rowSums(predictedAlcohol[,-1]))/dim(predictedAlcohol[,-1])[2])
+# b) weighted average, using the weights
+weightedModelAverage <- round(rowSums(sweep(predictedAlcohol[,-1], MARGIN=2,
+                                      as.numeric(modelWeights),`*`)))
+
+# v) store predictions in matrix
+allModelPredictions <- cbind(cbind(olsPredictions, lassoPredictions, ridgePredictions, 
+                elasticPredictions, randomPredictions, unweightedModelAverage, weightedModelAverage))
+
+# vi) for each method, determine average absolute difference
+# sum(abs(alcoholValid_i - modelPrediction_ik)/nrow(alcoholValid))
+for(i in 1:dim(allModelPredictions)[2]){
+  print(sum(abs(alcoholValid[1:20] - allModelPredictions[1:20,i])/length(alcoholValid)))
+}
