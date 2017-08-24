@@ -107,7 +107,27 @@ dev.off()
 # c) looking at figure 4, it appears that the first two components
 # are orthogonal to each other and that most documents tend 
 # toward zero along both dimensions
-# find extreme docs (13, 112, 134; and 76)
+# find extreme docs (13, 112, 134; and 76, 85)
 # first component seems to be advice to the ruler
 # w/ examples that use Romans frequently
 # second compotent is discussing protecting a ruler's state
+
+# 3 a) calculate the Euclidean distance of machDTM
+euclideanMachDTM <- as.matrix(dist(machDTM[,-1], method = "euclidean"))
+# b) apply the classic MDS
+classicMDS <- cmdscale(euclideanMachDTM, k = 2)
+# c) re-run PCA w/o scaling
+machPCAunscaled <- prcomp(machDTM, scale = F)
+# d) check correlation between embeddings
+cor(classicMDS[,1], machPCAunscaled$x[,1])
+# cor = 0.99
+# e) create distance matrix using the manhattan metric
+manhattanMachDTM <- as.matrix(dist(machDTM[,-1], method = "manhattan"))
+# apply classic multidimensional scaling
+manhattanMDS <- cmdscale(manhattanMachDTM, k = 2)
+cor(manhattanMDS[,1], machPCAunscaled$x[,1])
+# cor = 0.95
+
+# when PCA minimizes dimensions, tries to preserve covariance of data
+# when MDS minimizes dimensions, tries to preserve distance between data points
+# so if covariance in data = distance (euclidean or manhattan) between data points they should be the same
