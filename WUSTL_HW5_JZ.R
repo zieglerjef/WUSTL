@@ -1,7 +1,7 @@
 # Problem 1
 
 # load libraries and .csv files
-library(rjson); library(stm)
+library(rjson); library(stm); library(tm); library(stringr)
 NYTjson <- fromJSON(file="~/Documents/Git/WUSTL_textAnalysis/nyt_ac.json")
 
 # fit a model with 8 topics that conditions on the desk of origin
@@ -51,5 +51,63 @@ dev.off()
 pdf("~/Documents/Git/WUSTL_textAnalysis/HW5topicProportionsLDA.pdf")
 plot(ldaModel, type = "hist", xlim = c(0, .5), labeltype="frex")
 dev.off()
-
 # not much difference between the two estimated topic proportions
+
+# Problem 2
+
+# we'll make our DTM using the tm package primarily
+# create a corpus and transform data
+# read in files
+# make corpus
+machText <- Corpus(DirSource("~/Documents/Git/WUSTL_textAnalysis/MachText"),
+              readerControl = list(language = "en"))
+# remove punctuation and capitalization
+machText <- tm_map(machText, removePunctuation)
+machText <- tm_map(machText, content_transformer(tolower))
+# we'll also remove stop words
+machText <- tm_map(machText, removeWords, stopwords("english"))
+# apply porter stemmer
+machText <- tm_map(machText, stemDocument)
+# create DTM of machTexts
+machDTM <- DocumentTermMatrix(machText)
+# reduce DTM to  top 500 unigrams
+machDTM <- machDTM[,-c(501:2367)]
+# normalize by term frequaency - i.e. divide count of each word 
+# in document by total number of words in document
+machDTM <- normalize(machDTM$j)
+
+# reduce DTM to  top 500 unigrams
+machDTM <- machDTM[,-c(501:2367)]
+# show top 500 unigrams
+# machDTM$dimnames$Terms
+# see what DTM looks like
+machDTM <- machDTM/rowSums(as.matrix(machDTM))
+inspect(machDTM)
+
+# Problem 3
+
+# 2) apply the function prcomp 
+# scale data to ensure each column has unit variance
+machPCA <- prcomp(machDTM, scale = T)
+
+# a ) reate a plot of variance explained by each additional principal component
+pdf("~/Documents/Git/WUSTL_textAnalysis/HW5screePlot.pdf")
+plot(machPCA, type = "l")
+dev.off()
+# the "elbow rule" doesn't really apply, and we don't want to introduce
+# more error for better fit at a certain point
+# so we'll include 10 components
+
+pdf("~/Documents/Git/WUSTL_textAnalysis/HW5pcaEmbedding.pdf")
+plot(machPCA$rotation, pch='',
+     xlab="1st Principal Component",ylab="2nd Principal Component")
+text(machPCA$rotation, labels=str_extract(machDTM$dimnames$Docs, "[[:digit:]]+"),cex= 0.7)
+dev.off()
+
+# c) looking at figure 4, it appears that the first two components
+# are orthogonal to each other and that most documents tend 
+# toward zero along both dimensions
+# find extreme docs (13, 112, 134; and 76)
+# first component seems to be advice to the ruler
+# w/ examples that use Romans frequently
+# second compotent is discussing protecting a ruler's state
